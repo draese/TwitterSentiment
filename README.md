@@ -23,7 +23,7 @@ The project demonstrates a few things:
 ### You'll need a Twitter API key and secret to get this code running. 
 1. Go to developer.twitter.com to create a developer account (or add to existing twitter account)
 2. Generate an API key and API secret. These are normally only good for the 2.0 Twitter API
-3. Request an elevated API access. Swifter uses the 1.1 API that requires the elevated access, which should stil be free for experimental use.
+3. Request an elevated API access. Swifter uses the 1.1 API that requires the elevated access, which should still be free for experimental use.
 
 ### You'll need to inject the API key and secret into the XCode project.
 As you should never store, commit or upload any API keys or secret to github, you have to specifiy them separately in an xcode configuration. The main idea is to have the locally available at compile time but never to check them in to the project or github.

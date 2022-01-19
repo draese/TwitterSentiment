@@ -14,6 +14,7 @@ struct K {
     struct Swifter {
         static let apiKey = Bundle.main.infoDictionary?["API_KEY"] as? String
         static let apiSecret = Bundle.main.infoDictionary?["API_SECRET"] as? String
+        static let fullTextKey = "full_text"
     }
     
     /// Constants, related to Logger configuration.

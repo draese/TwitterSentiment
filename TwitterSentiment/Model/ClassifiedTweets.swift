@@ -47,25 +47,31 @@ struct ClassifiedTweets {
         var neg = [Tweet]()
         var neu = [Tweet]()
         var pos = [Tweet]()
-        
+
         // map each input tweet into a target array by the classifier's output
-        for tweetEntry in twitterResponse.array ?? [] {
-            if let tweet = tweetEntry["full_text"].string {
-                do {
-                    let tweetClass = try classifier.prediction(text: tweet)
-                    let mappedTweet = Tweet(text: tweet, sentimentFromString: tweetClass.label)
+        if let source = twitterResponse.array {
+            // prepare batch-scoring input by mapping tweet text into classifier input
+            let batchInput = source.map { tweet in TwitterSentimentClassifierInput(text: tweet[K.Swifter.fullTextKey].string ?? "") }
+
+            do {
+                // batch-score the whole input set of tweets
+                let classifierOutput = try classifier.predictions(inputs: batchInput)
+                
+                // wrap the classifier output into our own Tweet model class instances
+                for i in 0 ..< classifierOutput.count {
+                    let mappedTweet = Tweet(text: batchInput[i].text , sentimentFromString: classifierOutput[i].label)
                     
                     switch(mappedTweet.sentiment) {
                     case .negative: neg.append(mappedTweet)
                     case .neutral: neu.append(mappedTweet)
                     case .positive: pos.append(mappedTweet)
                     }
-                } catch {
-                    logger.error("Failed to classify tweet: \(error.localizedDescription, privacy: .public)")
                 }
+            } catch {
+                logger.error("Failed to classify tweets: \(error.localizedDescription, privacy: .public)")
             }
         }
-
+        
         logger.debug("Mapped \(neg.count, privacy: .public) negative, \(neu.count, privacy: .public) neutral and \(pos.count, privacy: .public) tweets.")
         negative = neg
         neutral = neu
